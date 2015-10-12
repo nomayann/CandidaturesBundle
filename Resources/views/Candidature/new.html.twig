@@ -1,0 +1,54 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block title "Candidatures - Création" %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets  'bundles/bmatznerjqueryui/css/smoothness/jquery-ui.css'
+                    'bundles/bmatznerjqueryui/css/smoothness/jquery.ui.theme.css'
+     filter='cssrewrite' %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %} 
+    {{ form_stylesheet(form) }}
+{% endblock %}
+
+{% block content -%}
+    <div class="col-sm-8 col-sm-offset-2">
+	    <h1 class="candidature">Enregistrer une candidature</h1>
+
+	    {{ form(form) }}
+
+        <a class="btn btn-info" href="{{ path('candidature') }}">
+            <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+        </a>
+        <a class="btn btn-success"  data-toggle="modal" data-target="#popupEntse" data-href="{{ path('entreprise_new') }}" data-title="Enregistrer une entreprise">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> entreprise
+        </a>
+
+	</div>
+    <div class="modal fade" id="popupEntse" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel"><span class="entreprise">Enregistrer une entreprise</span></h4>
+                </div>
+                <div class="modal-body">
+                    {% render(controller('CandidaturesBundle:Entreprise:new', 
+                            {'ajax': true}))  %}
+                </div>            
+            </div>
+        </div>
+        </div>	
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	{% javascripts 		
+		'@CandidaturesBundle/Resources/public/js/candidature.js'
+	%}
+	<script src="{{ asset_url }}"></script>
+	{% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('bundles/bmatznerjqueryui/js/minified/jquery-ui.min.js') }}"></script>
+    {{ form_javascript(form) }}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block title "Candidatures - Créer une entreprise" %}
+
+{% block content -%}
+	<div class="col-sm-8 col-sm-offset-2">
+	    <h1 class="entreprise">Entreprise creation</h1>
+
+	    {% include 'CandidaturesBundle:Entreprise:form_new.html.twig' with {'form' : form}  %}
+
+        <a class="btn btn-info" href="{{ path('entreprise') }}">
+            <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+        </a>
+	</div>
+{% endblock %}

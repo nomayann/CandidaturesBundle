@@ -1,0 +1,17 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block title %}Type Candidature{% endblock %}
+
+{% block content -%}
+    <h1 class="candidature">TypeCandidature creation</h1>
+
+    {{ form(form) }}
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('typecandidature') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block title "Candidatures - Liste des entreprises" %}
+
+{% block content -%}
+    <div class="col-md-6">
+        <h1 class="entreprise">
+            Entreprises&nbsp;
+            <a class="btn btn-success" href="{{ path('entreprise_new') }}">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>   
+            </a>
+        </h1>
+    </div>
+    <div class="col-md-6">
+        <p class="">&nbsp;</p>
+        <div class="text-right">
+            <form action ="{{ app.request.uri }}" class="form-inline" method="POST">
+                <div class="form-group">
+                    <input  name="search" type="text" 
+                            class="form-control" id="search" placeholder="Recherche"
+                            {{  search is defined and search is not empty ? 'value=' ~ search : "" }}
+                            >
+                </div>
+                <button type="submit" class="btn btn-default" id="search-btn">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <table class="records_list table table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>
+                        Nom
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'name', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'name', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                    </th>
+                    <th>
+                        <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'tel', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'tel', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                    </th>
+                    <th>
+                        <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'email', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'email', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                    </th>
+                    <th>
+                        <span class="glyphicon glyphicon-link" aria-hidden="true"></span>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'webSite', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'webSite', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                    </th>
+                    <th>
+                        Ville
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'city', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'city', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                    </th>
+                    <th>
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'effective', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                        <a href="{{ path('entreprise_ordered', { 'column' : 'effective', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                    </th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td>{{ entity.name }}</td>
+                    <td>{{ entity.tel }}</td>
+                    <td>
+                        {% if entity.email %}
+                            <small>
+                                <a href="mailto:{{ entity.email }}">
+                                    <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span>&nbsp;{{ entity.email }}
+                                </a>
+                            </small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if entity.webSite %}
+                            {% set displayWebsite = entity.website | split('/',3) %}
+                            {% set displayWebsite = displayWebsite.2 | trim('/') %}
+                            <small>
+                                <a href="{{ entity.webSite }}" target="_blank">
+                                    <span class="glyphicon glyphicon-link" aria-hidden="true"></span>&nbsp;
+                                    {{ displayWebsite }}
+                                </a>
+                            </small>
+                        {% endif %}
+                    </td>
+                    <td>{{ entity.city }}</td>
+                    <td>{{ entity.effective }}</td>
+                    <td>
+                        <a class="btn btn-xs btn-primary" href="{{ path('entreprise_show', { 'id': entity.id }) }}">
+                            <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                        </a>
+                        <a class="btn btn-xs btn-warning" href="{{ path('entreprise_edit', { 'id': entity.id }) }}">
+                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endblock %}

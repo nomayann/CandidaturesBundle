@@ -1,0 +1,117 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block title "Candidatures - Liste de candidatures" %}
+
+
+{% block content -%}
+    <div class="col-md-6">
+        <h1 class="candidature">
+            Mes Candidatures&nbsp;
+            <a class="btn btn-success" href="{{ path('candidature_new') }}">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </a>
+        </h1>
+    </div>
+    <div class="col-md-6">
+        <p>&nbsp;</p>
+        <div class="text-right">
+            <form action ="{{ app.request.uri }}" class="form-inline" method="POST">
+                <div class="form-group">
+                    <input  name="search" type="text" 
+                            class="form-control" id="search" placeholder="Recherche"
+                            {{  search is defined and search is not empty ? 'value=' ~ search : "" }}
+                            >
+                </div>
+                <button type="submit" class="btn btn-default" id="search-btn">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <table class="records_list table table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>
+                        <small>
+                            <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> diffusion
+                            <a href="{{ path('candidature_ordered', { 'column' : 'dateOffre', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                            <a href="{{ path('candidature_ordered', { 'column' : 'dateOffre', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                        </small>
+                    </th>
+                    <th>
+                        <small>
+                            <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> modif
+                            <a href="{{ path('candidature_ordered', { 'column' : 'updatedAt', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                            <a href="{{ path('candidature_ordered', { 'column' : 'updatedAt', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                        </small>
+                    </th>
+                    <th>
+                        Entreprise
+                        <a href="{{ path('candidature_ordered', { 'column' : 'entreprise', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                        <a href="{{ path('candidature_ordered', { 'column' : 'entreprise', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                    </th>
+                    <th>
+                        Libellé // Référence
+                        <a href="{{ path('candidature_ordered', { 'column' : 'libOffre', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                        <a href="{{ path('candidature_ordered', { 'column' : 'libOffre', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                    </th>
+                    <th class="text-center">
+                        &Eacute;tat
+                        <a href="{{ path('candidature_ordered', { 'column' : 'status', 'direction' : 'ASC' }) }}"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span></a>
+                        <a href="{{ path('candidature_ordered', { 'column' : 'status', 'direction' : 'DESC' }) }}"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></a>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                {% if entity.0 is defined %}
+                    {% set candidature = entity.0 %}
+                {% else %}
+                    {% set candidature = entity %}
+                {% endif %}
+                <tr {{ entity.nbEvenements is defined and entity.nbEvenements > 0 and candidature.status ? "class='success'" : "" }}
+                    {{ entity.nbEvenements is defined and entity.nbEvenements == 0 and candidature.status ? "class='info'" : "" }}
+                    {{ not candidature.status ? "class='danger'" : "" }}
+                    >
+                    <td>
+                        <small>
+                            {% if candidature.dateOffre %}
+                                {{ candidature.dateOffre|localizeddate('short', 'none') }}
+                            {% endif %}
+                        </small>
+                    </td>
+                    <td>
+                        <small>
+                            {% if candidature.updatedAt %}
+                                {{ candidature.updatedAt|localizeddate('short', 'none') }}
+                            {% endif %}
+                        </small>
+                    </td>
+                    <td>
+                        <a href='{{ path('entreprise_show', { 'id': candidature.entreprise.id }) }}'>{{ candidature.entreprise.name }}</a>
+                    </td>
+                    <td>{% if candidature.refOffre %}{{ candidature.refOffre }} // {% endif %}{{ candidature.libOffre }}</td>
+                    <td class="text-center">
+                        {% if candidature.status %}
+                            <a href="{{ path('candidature_update_status', { 'id': candidature.id, 'status' : 'failure' }) }}">
+                                <span class="glyphicon glyphicon-thumbs-up success" aria-hidden="true"></span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('candidature_update_status', { 'id': candidature.id, 'status' : 'success' }) }}">
+                                <span class="glyphicon glyphicon-thumbs-down failure" aria-hidden="true"></span> 
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="btn btn-xs btn-primary" href="{{ path('candidature_show', { 'id': candidature.id }) }}">
+                            <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

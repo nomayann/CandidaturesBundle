@@ -1,0 +1,9 @@
+{% if ajax %}
+	{{ form_stylesheet(edit_form) }}
+{% endif %}
+
+{{ form(edit_form) }}
+
+{% if ajax %}
+	{{ form_javascript(edit_form) }}
+{% endif %}
