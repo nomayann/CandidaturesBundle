@@ -1,0 +1,15 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block title %}Modifier un Contact{% endblock %}
+
+{% block content -%}
+    <h1 class="contact">Contact edit</h1>
+
+    {{ form(edit_form) }}
+
+    <a class="btn btn-info" href="{{ path('contact') }}">
+        Back to the list
+    </a>
+
+    {{ form(delete_form) }}
+{% endblock %}

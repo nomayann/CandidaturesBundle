@@ -1,0 +1,47 @@
+{% extends 'AppBundle::layout.html.twig' %}
+
+{% block title "Candidatures - Liste de documents" %}
+
+{% block content -%}
+    <div class="col-sm-10 col-sm-offset-1">
+        <h1 class="document">
+            Documents&nbsp;
+            <a class="btn btn-success" href="{{ path('document_new') }}">
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>   
+            </a>
+        </h1>
+
+        <table class="records_list table table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Path</th>
+                    <th>Evenement</th>
+                    <th>Candidature</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td><small><a href="{{ path('document_show', { 'id': entity.id }) }}">{{ entity.id }}</a></small></td>
+                    <td><small>{{ entity.name }}</small></td>
+                    <td><small><a href="{{ asset(entity.webPath) }}">{{ entity.path }}</a></small></td>
+                    <td><small>{% if entity.evenement %}{{ entity.evenement.date|localizeddate('short', 'none') }}{% endif %}</small></td>
+                    <td><small>{% if entity.candidature %}{{ entity.candidature.dateOffre|localizeddate('short', 'none') }}{% endif %}</small></td>
+                    <td>
+                        <a class="btn btn-xs btn-primary" href="{{ path('document_show', { 'id': entity.id }) }}">
+                            <span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>
+                        </a>
+
+                        {% form_theme entity.deleteForm 'AppBundle:Form:my_form.html.twig' %}
+
+                        {{ form(entity.deleteForm) }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endblock %}
