@@ -73,7 +73,7 @@ class EvenementController extends Controller
             $em->flush();
 
             if ($request->isXmlHttpRequest()){
-                $response = new \stdClass();
+                $response = new \stdClass();    
                 $response->evenement = $this->renderView('CandidaturesBundle:Evenement:list_elt.html.twig', array('evenement' => $entity));
                 return new JsonResponse($response);
             }
@@ -94,14 +94,15 @@ class EvenementController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Evenement $entity)
+    private function createCreateForm(Evenement $entity, array $options = array())
     {
-        $form = $this->createForm(new EvenementType(), $entity, array(
+        $manager = $this->getDoctrine()->getManager();
+        $form = $this->createForm(new EvenementType($manager, $options), $entity, array(
             'action' => $this->generateUrl('evenement_create'),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Créer'));
 
         return $form;
     }
@@ -117,14 +118,16 @@ class EvenementController extends Controller
     {
         $entity = new Evenement();
         $request = Request::createFromGlobals();
+        $options = array();
 
         if ( !is_null($candidature_id) ){
             $em = $this->getDoctrine()->getManager();
             $candidature = $em->getRepository('CandidaturesBundle:Candidature')->find($candidature_id);
             $entity->setCandidature($candidature);
+            $options['candidature'] = 'hide';
         }
 
-        $form   = $this->createCreateForm($entity);
+        $form   = $this->createCreateForm($entity, $options);
 
         if ($ajax || $request->isXmlHttpRequest()){
             return $this->render('CandidaturesBundle:Evenement:form_new.html.twig',array(
@@ -213,12 +216,13 @@ class EvenementController extends Controller
     */
     private function createEditForm(Evenement $entity)
     {
-        $form = $this->createForm(new EvenementType(), $entity, array(
+        $manager = $this->getDoctrine()->getManager();
+        $form = $this->createForm(new EvenementType($manager, array('candidature' => 'hide')), $entity, array(
             'action' => $this->generateUrl('evenement_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Update'));
+        $form->add('submit', 'submit', array('label' => 'Modifier'));
 
         return $form;
     }

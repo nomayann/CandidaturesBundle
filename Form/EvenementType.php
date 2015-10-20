@@ -6,9 +6,21 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Persistence\ObjectManager;
+use NomayaCandidaturesBundle\Form\DataTransformer\CandidatureToNumberTransformer;
 
 class EvenementType extends AbstractType
 {
+    /**
+     * @param ObjectManager $manager
+     * @param array $mainOptions
+     */    
+    public function __construct(ObjectManager $manager, array $mainOptions = array())
+    {
+        $this->manager = $manager;
+        $this->mainOptions = $mainOptions;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -41,14 +53,29 @@ class EvenementType extends AbstractType
                                         },
                                         'required' => false,
                                         ))
-            ->add('candidature')
             ->add('documents', 'collection', array(
-                    'type' => new DocumentType(),
+                    'type' => new DocumentType($this->manager, array(
+                                                                    'candidature' => 'hide',
+                                                                    'evenement' => 'hide')),
                     'allow_add' => true,
                     'allow_delete' => true,
                     'by_reference' => false,
                     ))
             ;
+            if( array_key_exists('candidature', $this->mainOptions) 
+            && $this->mainOptions['candidature'] == 'hide' )
+            {
+                $builder->add('candidature','hidden', array(
+                                            'required' => false,
+                                            'invalid_message' => 'La candidature liée n\'a pas pu être identifiée'
+                                            ));
+
+                $builder->get('candidature')
+                    ->addModelTransformer(new CandidatureToNumberTransformer($this->manager));
+            } else
+            {
+                $builder->add('candidature');
+            }
     }
     
     /**

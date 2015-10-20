@@ -87,14 +87,15 @@ class DocumentController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Document $entity)
+    private function createCreateForm(Document $entity, $options = array())
     {
-        $form = $this->createForm(new DocumentType(), $entity, array(
+        $manager = $this->getDoctrine()->getManager();
+        $form = $this->createForm(new DocumentType($manager, $options), $entity, array(
             'action' => $this->generateUrl('document_upload'),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
+        $form->add('submit', 'submit', array('label' => 'Créer'));
 
         return $form;
     }
@@ -108,19 +109,26 @@ class DocumentController extends Controller
     public function newAction($ajax = false, $params = null)
     {
         $entity = new Document();
-
+        $options = array();
         if ($params && is_array($params)){
             $em = $this->getDoctrine()->getManager();
             if (array_key_exists('candidature_id', $params)){
                 $candidature = $em->getRepository('CandidaturesBundle:Candidature')->find($params['candidature_id']);
                 $entity->setCandidature($candidature);
+                $options = array(
+                    'candidature' => 'hide',
+                    'evenement' => 'hide'
+                    );
             }
             if (array_key_exists('evenement_id', $params)){
                 $evenement = $em->getRepository('CandidaturesBundle:Evenement')->find($params['evenement_id']);
                 $entity->setCandidature($evenement);
-            }
+                $options = array(
+                    'candidature' => 'hide',
+                    'evenement' => 'hide'
+                    );            }
         }
-        $form   = $this->createCreateForm($entity);
+        $form   = $this->createCreateForm($entity, $options);
 
         if ($ajax){
             return $this->render('CandidaturesBundle:Document:form.html.twig',array(

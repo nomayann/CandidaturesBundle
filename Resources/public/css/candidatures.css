@@ -1,19 +1,10 @@
-#popupAddDoc .modal-body div.form-group:nth-child(3),
-#popupAddDoc .modal-body div.form-group:nth-child(4),
-#popupEvt .modal-body div.form-group:nth-child(6),
-#popupContact .modal-body div.form-group:nth-child(7),
-div [id ^="nomaya_candidatures_candidaturesbundle_evenement_documents_"] div.form-group:nth-child(3),
-div [id ^="nomaya_candidatures_candidaturesbundle_evenement_documents_"] div.form-group:nth-child(4)
-{
-	display:none;
-}
-
 div[data-prototype] > div > div.form-group,
 div[data-prototype] div.addDoc{
 	clear:both;
 	padding-top: 1em;
 }
-div[data-prototype] > div > div.form-group > label{ color: white; }
+div[data-prototype] > div > div.form-group > label,
+div[data-prototype] > div.form-group > label { color: white; display:none; }
 
 p[class^="bg-"]{ padding: 1em; }
 

@@ -82,9 +82,10 @@ class ContactController extends Controller
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Contact $entity)
+    private function createCreateForm(Contact $entity, array $options = array())
     {
-        $form = $this->createForm(new ContactType(), $entity, array(
+        $manager = $this->getDoctrine()->getManager();
+        $form = $this->createForm(new ContactType($manager, $options), $entity, array(
             'action' => $this->generateUrl('contact_create'),
             'method' => 'POST',
         ));
@@ -106,14 +107,16 @@ class ContactController extends Controller
     {
         $entity = new Contact();
         $request = Request::createFromGlobals();
+        $options = array();
 
         if (!is_null($entreprise_id)){
             $em = $this->getDoctrine()->getManager();
             $entreprise = $em->getRepository('CandidaturesBundle:Entreprise')->find($entreprise_id);
             $entity->setEntreprise($entreprise);
+            $options = array('entreprise' => 'hide');
         }
 
-        $form   = $this->createCreateForm($entity);
+        $form   = $this->createCreateForm($entity, $options);
 
         if ($ajax || $request->isXmlHttpRequest()){
             return $this->render('CandidaturesBundle:Contact:form_new.html.twig',array(
@@ -187,7 +190,8 @@ class ContactController extends Controller
     */
     private function createEditForm(Contact $entity)
     {
-        $form = $this->createForm(new ContactType(), $entity, array(
+        $manager = $this->getDoctrine()->getManager();
+        $form = $this->createForm(new ContactType($manager), $entity, array(
             'action' => $this->generateUrl('contact_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));

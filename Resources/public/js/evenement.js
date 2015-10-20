@@ -16,7 +16,7 @@ jQuery(document).ready(function() {
             // Modification du titre de la modale
             $('#popupEvt .modal-title').html(title);
             // Ajout d'un écouteur d'évènement sur le bouton d'update du formlaire ajouté
-            addEventUpdateListener($('#popupEvt form[name="nomaya_candidatures_candidaturesbundle_evenement"]'));
+            addEventUpdateListener($('#popupEvt form[name="candidaturesbundle_evenement"]'));
 
             // Boutons d'ajout / suppression de documents
             $collectionHolder = $('#popupEvt div[data-prototype]');

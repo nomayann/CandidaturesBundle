@@ -6,9 +6,21 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Persistence\ObjectManager;
+use NomayaCandidaturesBundle\Form\DataTransformer\EntrepriseToNumberTransformer;
 
 class ContactType extends AbstractType
 {
+    /**
+     * @param ObjectManager $manager
+     * @param array $mainOptions
+     */
+    public function __construct(ObjectManager $manager, array $mainOptions = array())
+    {
+        $this->manager = $manager;
+        $this->mainOptions = $mainOptions;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -45,8 +57,16 @@ class ContactType extends AbstractType
             ->add('note', 'textarea', array(
                                         'trim' => true,
                                         'required' => false
-                                        ))
-            ->add('entreprise', 'genemu_jqueryselect2_entity', array(
+                                        ));
+            if( array_key_exists('entreprise', $this->mainOptions) 
+                && $this->mainOptions['entreprise'] == 'hide' )
+            {
+                $builder->add('entreprise', 'hidden');
+                $builder->get('entreprise')
+                        ->addModelTransformer(new EntrepriseToNumberTransformer($this->manager));
+            } else
+            {
+                $builder->add('entreprise', 'genemu_jqueryselect2_entity', array(
                                         'class'=>'CandidaturesBundle:Entreprise',
                                         'query_builder' => function(EntityRepository $er) 
                                             {
@@ -54,8 +74,9 @@ class ContactType extends AbstractType
                                                         ->orderBy('e.name', 'ASC');
                                             },
                                         'label'=>'Entreprise',
-                                        ))
-        ;
+                                        ));   
+            }
+        
     }
     
     /**
